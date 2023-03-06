@@ -1,12 +1,16 @@
-// declaration
+// function declaration
 function sum(a, b) {
   return a + b;
 }
 
 // call function
-// console.log(sum(1));
-// console.log(sum(1, 1));
-// console.log(sum(1, 1, 1));
+console.log(sum(1));
+console.log(sum(1, 1));
+console.log(sum(1, 1, 1));
+
+// anonymous/lambda function
+
+// arrow function
 
 // rest param
 function add(...values) {
