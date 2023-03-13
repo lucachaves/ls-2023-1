@@ -50,11 +50,13 @@ for (let flag = 0; flag < integers.length; flag++) {
   console.log(integers[flag]);
 }
 
-for (const index in integers) { // [0, 1, 2]
+for (const index in integers) {
+  // [0, 1, 2]
   console.log(integers[index]);
 }
 
-for (const number of numbers) { // [10, 20, 30]
+for (const number of numbers) {
+  // [10, 20, 30]
   console.log(number);
 }
 
@@ -67,3 +69,6 @@ for (const number of numbers) { // [10, 20, 30]
 // Accessor: includes(), join(), slice()
 
 // Iteration: map(), filter(), reduce(), every(), some()
+const sum = [1, 2, 3].map((x) => 2 * x);
+
+console.log(sum);
