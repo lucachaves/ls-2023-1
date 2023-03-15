@@ -43,3 +43,11 @@ console.log(12 & 1);
 console.log(13 & 1);
 
 console.log(!11 & 1);
+
+// coercion type
+// https://exploringjs.com/deep-js/ch_type-coercion.html
+console.log(1 + '1'); // 11
+console.log(10 / 'a'); // NaN
+// type error
+const x = 10;
+x(); // TypeError: x is not a function
