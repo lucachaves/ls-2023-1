@@ -22,7 +22,7 @@ const tesouroSelic = {
 console.log(tesouroSelic);
 
 // Class Definition
-class Investiment {
+class Investment {
   constructor(name, value, origin, category, date, interest) {
     this.name = name;
     this.value = value;
@@ -33,7 +33,7 @@ class Investiment {
   }
 }
 
-const tesouroIpca = new Investiment(
+const tesouroIpca = new Investment(
   'Tesouro IPCA 2029',
   100,
   'Tesouro Nacional',

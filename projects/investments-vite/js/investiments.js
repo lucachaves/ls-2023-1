@@ -1,4 +1,4 @@
-export const investiments = [
+export const investments = [
   {
     name: 'Tesouro Selic 2029',
     value: 100.5,
