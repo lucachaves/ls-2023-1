@@ -8,7 +8,8 @@ import {
   initTE,
 } from 'tw-elements';
 import { formatCurrency, formatDate } from './utils.js';
-import { investments } from './investments.js';
+import API from './api.js';
+
 import '../css/style.css';
 
 function investmentCard(investment) {
@@ -29,7 +30,9 @@ function investmentCard(investment) {
         <span class="font-bold">Categoria:</span> ${investment.category}
       </p>
       <p class="text-sm text-gray-500">
-        <span class="font-bold">Data:</span> ${formatDate(investment.date)}
+        <span class="font-bold">Data:</span> ${formatDate(
+          investment.created_at
+        )}
       </p>
       <p class="text-sm text-gray-500">
         <span class="font-bold">Taxa:</span> ${investment.interest}
@@ -46,7 +49,7 @@ function insertInvestmentCard(investment) {
   investmentsGrid.insertAdjacentHTML('beforeend', view);
 }
 
-function submitHandler(event) {
+async function submitHandler(event) {
   event.preventDefault();
 
   const form = document.querySelector('form');
@@ -55,13 +58,45 @@ function submitHandler(event) {
 
   investment.value = Number(investment.value.replace(',', '.'));
 
+  investment.created_at = investment.created_at.split('/').reverse().join('-');
+
   console.log(investment);
 
-  insertInvestmentCard(investment);
+  await API.create('/investments', investment);
+
+  await loadInvestments();
 
   form.reset();
 
   document.querySelector('button[data-te-offcanvas-dismiss]').click();
+}
+
+async function loadCategoryOptions() {
+  const categories = await API.readAll('/categories');
+
+  categories.forEach((category) => {
+    const option = document.createElement('option');
+
+    option.value = category.id;
+    option.textContent = category.name;
+
+    document.querySelector('#category_id').appendChild(option);
+  });
+}
+
+async function loadInvestments() {
+  const investments = (
+    await API.readAll('/investments?select=*,categories(name)')
+  ).map((investment) => ({
+    ...investment,
+    category: investment.categories.name,
+  }));
+
+  const investmentsGrid = document.querySelector('.investments');
+
+  investmentsGrid.innerHTML = '';
+
+  investments.forEach((investment) => insertInvestmentCard(investment));
 }
 
 window.submitHandler = submitHandler;
@@ -75,4 +110,6 @@ initTE({
   Select,
 });
 
-investments.forEach((investment) => insertInvestmentCard(investment));
+loadCategoryOptions();
+
+loadInvestments();
