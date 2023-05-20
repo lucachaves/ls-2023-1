@@ -1,47 +1,60 @@
+import { createClient } from '@supabase/supabase-js';
 import { API_KEY } from './consts.js';
 
-const api = 'https://wxxcutyfwymtvztcobvq.supabase.co/rest/v1';
+const api = 'https://wxxcutyfwymtvztcobvq.supabase.co';
 
-const supabaseHeaders = {
-  apikey: API_KEY,
-  Authorization: `Bearer ${API_KEY}`,
+const columns = {
+  investments: '*, categories(name)',
+  categories: '*',
 };
 
+const supabase = createClient(api, API_KEY);
+
 async function create(resource, data) {
-  await fetch(`${api}${resource}`, {
-    method: 'post',
-    body: JSON.stringify(data),
-    headers: {
-      ...supabaseHeaders,
-      'Content-Type': 'application/json; charset=UTF-8',
-      Prefer: 'return=minimal',
-    },
-  });
+  const { data: newData, error } = await supabase
+    .from(resource)
+    .insert(data)
+    .select(columns[resource]);
+
+  if (error) {
+    throw error;
+  }
+
+  return newData?.[0];
 }
 
 async function readAll(resource) {
-  const res = await fetch(`${api}${resource}`, { headers: supabaseHeaders });
+  const { data, error } = await supabase
+    .from(resource)
+    .select(columns[resource]);
 
-  return await res.json();
+  if (error) {
+    throw error;
+  }
+
+  return data;
 }
 
-async function update(resource, data) {
-  await fetch(`${api}${resource}`, {
-    method: 'put',
-    body: JSON.stringify(data),
-    headers: {
-      ...supabaseHeaders,
-      'Content-Type': 'application/json; charset=UTF-8',
-      Prefer: 'return=minimal',
-    },
-  });
+async function update(resource, id, data) {
+  const { newData, error } = await supabase
+    .from(resource)
+    .update(data)
+    .eq('id', id)
+    .select(columns[resource]);
+
+  if (error) {
+    throw error;
+  }
+
+  return newData;
 }
 
-async function remove(resource) {
-  await fetch(`${api}${resource}`, {
-    method: 'delete',
-    headers: supabaseHeaders,
-  });
+async function remove(resource, id) {
+  const { error } = await supabase.from(resource).delete().eq('id', id);
+
+  if (error) {
+    throw error;
+  }
 }
 
 export default { create, readAll, update, remove };

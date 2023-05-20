@@ -13,29 +13,35 @@ import API from './api.js';
 import '../css/style.css';
 
 function investmentCard(investment) {
-  return `<div class="bg-white shadow-md rounded-lg p-4">
+  return `
+  <div
+    id="investment-${investment.id}"
+    class="bg-white shadow-md rounded-lg p-4"
+  >
     <div class="flex justify-between items-center">
       <h3 class="text-lg font-semibold text-gray-700">
         ${investment.name}
       </h3>
-      <p class="text-lg font-semibold text-gray-700">${formatCurrency(
-        investment.value
-      )}</p>
+      <p class="text-lg font-semibold text-gray-700">
+        ${formatCurrency(investment.value)}
+      </p>
     </div>
     <div class="mt-4">
       <p class="text-sm text-gray-500">
-        <span class="font-bold">Origem:</span> ${investment.origin}
+        <span class="font-bold">Origem:</span>
+        ${investment.origin}
       </p>
       <p class="text-sm text-gray-500">
-        <span class="font-bold">Categoria:</span> ${investment.category}
+        <span class="font-bold">Categoria:</span>
+        ${investment.category}
       </p>
       <p class="text-sm text-gray-500">
-        <span class="font-bold">Data:</span> ${formatDate(
-          investment.created_at
-        )}
+        <span class="font-bold">Data:</span>
+        ${formatDate(investment.created_at)}
       </p>
       <p class="text-sm text-gray-500">
-        <span class="font-bold">Taxa:</span> ${investment.interest}
+        <span class="font-bold">Taxa:</span>
+        ${investment.interest}
       </p>
     </div>
   </div>`;
@@ -60,11 +66,11 @@ async function submitHandler(event) {
 
   investment.created_at = investment.created_at.split('/').reverse().join('-');
 
-  console.log(investment);
+  // console.log(investment);
 
-  await API.create('/investments', investment);
+  const newInvestment = await API.create('investments', investment);
 
-  await loadInvestments();
+  insertInvestmentCard(newInvestment);
 
   form.reset();
 
@@ -72,7 +78,7 @@ async function submitHandler(event) {
 }
 
 async function loadCategoryOptions() {
-  const categories = await API.readAll('/categories');
+  const categories = await API.readAll('categories');
 
   categories.forEach((category) => {
     const option = document.createElement('option');
@@ -85,9 +91,7 @@ async function loadCategoryOptions() {
 }
 
 async function loadInvestments() {
-  const investments = (
-    await API.readAll('/investments?select=*,categories(name)')
-  ).map((investment) => ({
+  const investments = (await API.readAll('investments')).map((investment) => ({
     ...investment,
     category: investment.categories.name,
   }));
