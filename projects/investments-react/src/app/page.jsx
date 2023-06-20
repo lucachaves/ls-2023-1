@@ -1,29 +1,22 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import InvestmentCard from '@/components/InvestmentCard';
 import { investments as investData } from './data';
-
-const categories = [
-  'Escolha uma categoria',
-  'Pós',
-  'Pré',
-  'IPCA',
-  'Renda Variável',
-  'Alternativos',
-];
+import API from '@/lib/api';
 
 const initialInvestment = {
   name: '',
   value: '',
   origin: '',
   interest: '',
-  category: categories[0],
-  create_at: '',
+  category_id: 1,
+  created_at: '',
 };
 
 export default function Home() {
   const [investments, setInvestments] = useState(investData);
+  const [categories, setCategories] = useState([]);
   const [investment, setInvestment] = useState(initialInvestment);
   const [isShowDrawer, setIsShowDrawer] = useState(false);
 
@@ -31,10 +24,20 @@ export default function Home() {
     setIsShowDrawer(!isShowDrawer);
   };
 
-  const addInvestment = (investment) => {
-    investment.id = new Date().getTime();
+  const loadData = async () => {
+    const categories = await API.readAll('categories');
 
-    setInvestments([...investments, investment]);
+    setCategories(categories);
+
+    const investments = await API.readAll('investments');
+
+    setInvestments(investments);
+  };
+
+  const addInvestment = async (investment) => {
+    const newInvestment = await API.create('investments', investment);
+
+    setInvestments([...investments, newInvestment]);
   };
 
   const handleSubmit = async (event) => {
@@ -56,6 +59,10 @@ export default function Home() {
 
     setInvestment({ ...investment, [name]: value });
   };
+
+  useEffect(() => {
+    loadData();
+  }, []);
 
   return (
     <>
@@ -207,19 +214,19 @@ export default function Home() {
                 </label>
                 <select
                   id="category"
-                  name="category"
+                  name="category_id"
                   onChange={handleChange}
-                  value={investment.category}
+                  value={investment.category_id}
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 >
                   {categories.map((category, index) => (
-                    <option value={category} key={index}>
-                      {category}
+                    <option value={category.id} key={index}>
+                      {category.name}
                     </option>
                   ))}
                 </select>
 
-                {/* Create_at Input */}
+                {/* Created_at Input */}
                 <div>
                   <label
                     htmlFor="created_at"
@@ -229,10 +236,10 @@ export default function Home() {
                   </label>
                   <input
                     type="date"
-                    id="create_at"
-                    name="create_at"
+                    id="created_at"
+                    name="created_at"
                     onChange={handleChange}
-                    value={investment.create_at}
+                    value={investment.created_at}
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="100% Selic"
                     required

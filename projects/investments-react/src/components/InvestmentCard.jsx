@@ -16,11 +16,12 @@ export default function InvestmentCard({ investment }) {
           <span className="font-bold">Origem:</span> {investment.origin}
         </p>
         <p className="text-sm text-gray-500">
-          <span className="font-bold">Categoria:</span> {investment.category}
+          <span className="font-bold">Categoria:</span>{' '}
+          {investment.categories?.name}
         </p>
         <p className="text-sm text-gray-500">
           <span className="font-bold">Data:</span>{' '}
-          {formatDate(investment.create_at)}
+          {formatDate(investment.created_at)}
         </p>
         <p className="text-sm text-gray-500">
           <span className="font-bold">Taxa:</span> {investment.interest}
