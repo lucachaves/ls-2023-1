@@ -6,6 +6,5 @@ export function formatCurrency(currency) {
 }
 
 export function formatDate(date) {
-  date = date.split('/').reverse().join('-');
   return new Date(date).toLocaleDateString('pt-BR');
 }
