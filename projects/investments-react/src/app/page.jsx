@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import InvestmentCard from '@/components/InvestmentCard';
-import { investments as investData } from './data';
 import API from '@/lib/api';
 
 const initialInvestment = {
@@ -15,7 +14,7 @@ const initialInvestment = {
 };
 
 export default function Home() {
-  const [investments, setInvestments] = useState(investData);
+  const [investments, setInvestments] = useState([]);
   const [categories, setCategories] = useState([]);
   const [investment, setInvestment] = useState(initialInvestment);
   const [isShowDrawer, setIsShowDrawer] = useState(false);
